@@ -55,11 +55,6 @@ spring:
     baseline-on-migrate: true
     connectRetries: 3
 
-  springdoc:
-    swagger-ui:
-      path: /swagger-ui # Caminho para a interface do Swagger UI
-    api-docs:
-      path: /v3/api-docs # Caminho para a documenta��o gerada pela API
 
 logging:
   level:

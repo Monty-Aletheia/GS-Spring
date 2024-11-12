@@ -14,7 +14,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -48,11 +47,6 @@ public class AuthService {
         }
 
         User user = existUser.get();
-
-        System.out.println(user.getEmail());
-        System.out.println(user.getPassword());
-        System.out.println(loginDTO.getEmail());
-        System.out.println(loginDTO.getPassword());
 
         if (!user.getPassword().equals(loginDTO.getPassword())) {
             throw new UnauthorizedException("Invalid credentials");
