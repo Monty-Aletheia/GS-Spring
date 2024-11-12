@@ -29,9 +29,18 @@ spring:
     driver-class-name: org.h2.Driver
     username: sa
     password:
+  # H2 console
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
 
+  # ConfiguraÃ§Ãµes de JPA/Hibernate
   jpa:
+    hibernate:
+      ddl-auto: update
     show-sql: true
+    database-platform: org.hibernate.dialect.H2Dialect
     properties:
       hibernate:
         format_sql: true
@@ -50,7 +59,7 @@ spring:
     swagger-ui:
       path: /swagger-ui # Caminho para a interface do Swagger UI
     api-docs:
-      path: /v3/api-docs # Caminho para a documentação gerada pela API
+      path: /v3/api-docs # Caminho para a documentaï¿½ï¿½o gerada pela API
 
 logging:
   level:

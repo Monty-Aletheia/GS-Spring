@@ -3,6 +3,7 @@ package com.fiap.br.globalSolution.application.service;
 import com.fiap.br.globalSolution.application.dto.auth.AuthResponseDTO;
 import com.fiap.br.globalSolution.application.dto.auth.LoginDTO;
 import com.fiap.br.globalSolution.application.dto.auth.RegisterDTO;
+import com.fiap.br.globalSolution.application.errors.BadRequestException;
 import com.fiap.br.globalSolution.application.errors.NotFoundException;
 import com.fiap.br.globalSolution.application.errors.UnauthorizedException;
 import com.fiap.br.globalSolution.application.service.mapper.UserMapper;
@@ -26,6 +27,13 @@ public class AuthService {
 
     public AuthResponseDTO register(RegisterDTO registerDTO) {
         User user = userMapper.toEntity(registerDTO);
+
+        Optional<User> existUser = userRepository.findByEmail(user.getEmail());
+
+        if(existUser.isPresent()) {
+            throw new BadRequestException("This email already in use");
+        }
+
         User savedUser = userRepository.save(user);
         AuthResponseDTO response = userMapper.toDto(savedUser);
         response.setMessage("User registered successfully");
@@ -41,7 +49,12 @@ public class AuthService {
 
         User user = existUser.get();
 
-        if (Objects.equals(loginDTO.getPassword(), user.getPassword())) {
+        System.out.println(user.getEmail());
+        System.out.println(user.getPassword());
+        System.out.println(loginDTO.getEmail());
+        System.out.println(loginDTO.getPassword());
+
+        if (!user.getPassword().equals(loginDTO.getPassword())) {
             throw new UnauthorizedException("Invalid credentials");
         }
 
