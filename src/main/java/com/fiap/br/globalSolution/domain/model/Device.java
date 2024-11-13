@@ -11,29 +11,33 @@ import java.util.UUID;
 
 @Entity
 @Data
-@Table(name = "tb_users")
-public class User {
+@Table(name = "tb_devices")
+public class Device {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @Column(nullable = false)
+    @Column(name = "name", nullable = false)
     private String name;
 
-    @Column(nullable = false)
-    private String password;
+    @Column(name = "category")
+    private String category;
 
-    @Column(nullable = false, unique = true)
-    private String email;
+    @Column(name = "model")
+    private String model;
 
-    @ManyToMany
-    @JoinTable(
-            name = "user_devices",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "device_id")
-    )
-    private List<Device> devices;
+    @Column(name = "power_rating")
+    private Double powerRating;  // Potência média em watts
+
+    @Column(name = "estimated_usage_hours")
+    private Double estimatedUsageHours;  // Horas estimadas de uso diário
+
+    @Column(name = "consumption")
+    private Double consumption;  // Consumo estimado em kWh
+
+    @ManyToMany(mappedBy = "devices")
+    private List<User> users;
 
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)
