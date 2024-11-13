@@ -1,12 +1,13 @@
-package com.fiap.br.globalSolution.application.dto.auth;
+package com.fiap.br.globalSolution.application.dto.user;
 
-import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 @Data
-public class RegisterDTO {
+public class UserRequestDTO {
+
     @NotEmpty
     @Schema(description = "Name of the user", example = "John Doe", required = true)
     private String name;

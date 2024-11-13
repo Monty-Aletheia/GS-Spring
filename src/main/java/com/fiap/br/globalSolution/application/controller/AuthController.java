@@ -11,9 +11,12 @@ import org.springframework.hateoas.Link;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
 @RequestMapping("/auth")
+@Tag(name = "Authentication", description = "Endpoints for user authentication and registration")
 public class AuthController {
 
     private final AuthService authService;
@@ -23,6 +26,7 @@ public class AuthController {
         this.authService = authService;
     }
 
+    @Operation(summary = "User Login", description = "Allows a registered user to log in by providing their credentials.")
     @PostMapping("/login")
     public ResponseEntity<EntityModel<AuthResponseDTO>> login(@Valid @RequestBody LoginDTO loginDTO) {
         AuthResponseDTO response = authService.login(loginDTO);
@@ -34,6 +38,7 @@ public class AuthController {
         return ResponseEntity.ok(resource);
     }
 
+    @Operation(summary = "User Registration", description = "Allows a new user to register by providing their details.")
     @PostMapping("/register")
     public ResponseEntity<EntityModel<AuthResponseDTO>> register(@Valid @RequestBody RegisterDTO registerDTO) {
         AuthResponseDTO response = authService.register(registerDTO);
