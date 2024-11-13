@@ -58,7 +58,7 @@ spring:
     swagger-ui:
       path: /swagger-ui # Caminho para a interface do Swagger UI
     api-docs:
-      path: /v3/api-docs # Caminho para a documentação gerada pela API
+      path: /v3/api-docs # Caminho para a documentaï¿½ï¿½o gerada pela API
 
 logging:
   level:
