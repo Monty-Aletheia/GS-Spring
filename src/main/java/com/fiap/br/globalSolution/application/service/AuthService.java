@@ -3,11 +3,13 @@ package com.fiap.br.globalSolution.application.service;
 import com.fiap.br.globalSolution.application.dto.auth.AuthResponseDTO;
 import com.fiap.br.globalSolution.application.dto.auth.LoginDTO;
 import com.fiap.br.globalSolution.application.dto.auth.RegisterDTO;
+import com.fiap.br.globalSolution.application.dto.user.UserResponseDTO;
 import com.fiap.br.globalSolution.application.errors.NotFoundException;
 import com.fiap.br.globalSolution.application.errors.UnauthorizedException;
 import com.fiap.br.globalSolution.application.service.mapper.UserMapper;
 import com.fiap.br.globalSolution.domain.model.User;
 import com.fiap.br.globalSolution.infra.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,13 +26,16 @@ public class AuthService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
 
+    @Transactional
     public AuthResponseDTO register(RegisterDTO registerDTO) {
         User user = userMapper.toEntity(registerDTO);
         User savedUser = userRepository.save(user);
-        AuthResponseDTO response = userMapper.toDto(savedUser);
-        response.setMessage("User registered successfully");
-        return response;
+        UserResponseDTO userResponse = userMapper.toDto(savedUser);
+        String message = "User registered successfully";
+
+        return new AuthResponseDTO(message,userResponse);
     }
+
 
     public AuthResponseDTO login(LoginDTO loginDTO) {
         Optional<User> existUser = userRepository.findByEmail(loginDTO.getEmail());
@@ -45,9 +50,9 @@ public class AuthService {
             throw new UnauthorizedException("Invalid credentials");
         }
 
-        AuthResponseDTO response = userMapper.toDto(user);
-        response.setMessage("Login successful");
+        String message = "Login successful";
+        UserResponseDTO userResponse = userMapper.toDto(user);
 
-        return response;
+        return new AuthResponseDTO(message,userResponse);
     }
 }
