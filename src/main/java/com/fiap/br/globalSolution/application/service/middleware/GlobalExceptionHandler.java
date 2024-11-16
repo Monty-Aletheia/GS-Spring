@@ -1,4 +1,4 @@
-package com.fiap.br.globalSolution.application.middleware;
+package com.fiap.br.globalSolution.application.service.middleware;
 
 import com.fiap.br.globalSolution.application.errors.BadRequestException;
 import com.fiap.br.globalSolution.application.errors.NotFoundException;

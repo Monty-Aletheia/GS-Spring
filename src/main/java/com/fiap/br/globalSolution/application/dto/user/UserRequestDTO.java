@@ -9,14 +9,14 @@ import lombok.Data;
 public class UserRequestDTO {
 
     @NotEmpty
-    @Schema(description = "Name of the user", example = "John Doe", required = true)
+    @Schema(description = "Name of the user", example = "John Doe")
     private String name;
 
     @Email
-    @Schema(description = "Email address of the user", example = "john.doe@example.com", required = true)
+    @Schema(description = "Email address of the user", example = "john.doe@example.com")
     private String email;
 
     @NotEmpty
-    @Schema(description = "Password for the user account", example = "securePassword123", required = true)
+    @Schema(description = "Password for the user account", example = "securePassword123")
     private String password;
 }

@@ -1,4 +1,4 @@
-package com.fiap.br.globalSolution.application.middleware;
+package com.fiap.br.globalSolution.application.service.middleware;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;

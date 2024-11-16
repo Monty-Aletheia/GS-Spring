@@ -9,10 +9,10 @@ import lombok.Data;
 @Data
 public class LoginDTO {
     @Email
-    @Schema(description = "Email address of the user", example = "john.doe@example.com", required = true)
+    @Schema(description = "Email address of the user", example = "john.doe@example.com")
     private String email;
 
     @NotEmpty
-    @Schema(description = "Password for the user account", example = "securePassword123", required = true)
+    @Schema(description = "Password for the user account", example = "securePassword123")
     private String password;
 }
