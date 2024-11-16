@@ -1,22 +1,25 @@
 package com.fiap.br.globalSolution.application.service;
 
+import com.fiap.br.globalSolution.application.dto.device.DeviceAssociationDTO;
 import com.fiap.br.globalSolution.application.dto.device.DeviceResponseDTO;
+import com.fiap.br.globalSolution.application.dto.device.UserDeviceDTO;
 import com.fiap.br.globalSolution.application.dto.user.UserRequestDTO;
 import com.fiap.br.globalSolution.application.dto.user.UserResponseDTO;
-import com.fiap.br.globalSolution.application.dto.user.UserWithDevicesResponseDTO;
 import com.fiap.br.globalSolution.application.errors.NotFoundException;
 import com.fiap.br.globalSolution.application.service.mapper.DeviceMapper;
+import com.fiap.br.globalSolution.application.service.mapper.UserDeviceMapper;
 import com.fiap.br.globalSolution.application.service.mapper.UserMapper;
 import com.fiap.br.globalSolution.domain.model.Device;
 import com.fiap.br.globalSolution.domain.model.User;
+import com.fiap.br.globalSolution.domain.model.UserDevice;
 import com.fiap.br.globalSolution.infra.repository.DeviceRepository;
+import com.fiap.br.globalSolution.infra.repository.UserDeviceRepository;
 import com.fiap.br.globalSolution.infra.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -25,8 +28,11 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final DeviceRepository deviceRepository;
+    private final UserDeviceRepository userDeviceRepository;
+
     private final UserMapper userMapper;
     private final DeviceMapper deviceMapper;
+    private final UserDeviceMapper userDeviceMapper = new UserDeviceMapper();
 
     // ==========================================
     // =                USERS                   =
@@ -61,29 +67,46 @@ public class UserService {
     // =======================================
 
     @Transactional
-    public UserWithDevicesResponseDTO addDevicesToUser(UUID userId, List<UUID> deviceIds) {
+    public void addDevicesToUser(UUID userId, DeviceAssociationDTO dto) {
         User user = findUserById(userId);
-        List<Device> devices = findDevicesByIds(deviceIds);
-        user.getDevices().addAll(devices);
-        userRepository.save(user);
-        return userMapper.toUserWithDevicesDto(user);
+
+        List<Device> devices = findDevicesByIds(
+                dto.getUserDevices().stream()
+                        .map(UserDeviceDTO::getDeviceId)
+                        .toList()
+        );
+
+        List<UserDevice> userDevices = userDeviceMapper.toEntityList(dto.getUserDevices(), user, devices);
+
+        userDeviceRepository.saveAll(userDevices);
+    }
+
+
+    @Transactional
+    public void removeDevicesFromUser(UUID userId, DeviceAssociationDTO dto) {
+        findUserById(userId);
+
+        List<UUID> deviceIds = dto.getUserDevices().stream()
+                .map(UserDeviceDTO::getDeviceId)
+                .toList();
+
+        userDeviceRepository.deleteByUserIdAndDeviceIdIn(userId, deviceIds);
     }
 
     @Transactional
-    public UserResponseDTO removeDevicesFromUser(UUID userId, List<UUID> deviceIds) {
-        User user = findUserById(userId);
-        List<Device> devicesToRemove = findDevicesByIds(deviceIds);
-        user.getDevices().removeAll(devicesToRemove);
-        userRepository.save(user);
-        return userMapper.toDto(user);
-    }
-
     public List<DeviceResponseDTO> getAllUserDevices(UUID userId) {
-        User user = findUserById(userId);
-        return user.getDevices().stream()
-                .map(deviceMapper::toDto)
+        List<UserDevice> userDevices = userDeviceRepository.findByUserId(userId);
+
+        return userDevices.stream()
+                .map(userDevice -> {
+                    DeviceResponseDTO deviceResponseDTO = deviceMapper.toDto(userDevice.getDevice());
+                    deviceResponseDTO.setEstimatedUsageHours(userDevice.getEstimatedUsageHours());
+                    deviceResponseDTO.setConsumption(userDevice.getConsumption());
+                    return deviceResponseDTO;
+                })
                 .toList();
     }
+
 
     // =======================================
     // =              HELPERS                =

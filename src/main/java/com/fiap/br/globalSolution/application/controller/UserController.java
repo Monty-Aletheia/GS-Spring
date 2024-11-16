@@ -4,13 +4,13 @@ import com.fiap.br.globalSolution.application.dto.device.DeviceResponseDTO;
 import com.fiap.br.globalSolution.application.dto.device.DeviceAssociationDTO;
 import com.fiap.br.globalSolution.application.dto.user.UserRequestDTO;
 import com.fiap.br.globalSolution.application.dto.user.UserResponseDTO;
-import com.fiap.br.globalSolution.application.dto.user.UserWithDevicesResponseDTO;
 import com.fiap.br.globalSolution.application.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.EntityModel;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -40,7 +40,7 @@ public class UserController {
     @GetMapping
     public ResponseEntity<List<EntityModel<UserResponseDTO>>> getAllUsers() {
         List<EntityModel<UserResponseDTO>> users = userService.getAllUsers().stream()
-                .map(user -> createUserEntityModel(user))
+                .map(this::createUserEntityModel)
                 .collect(Collectors.toList());
 
         return ResponseEntity.ok(users);
@@ -73,24 +73,22 @@ public class UserController {
 
     @Operation(summary = "Add devices to user", description = "Associates devices with a user.")
     @PostMapping("/{userId}/devices")
-    public ResponseEntity<EntityModel<UserWithDevicesResponseDTO>> addDevicesToUser(
-            @PathVariable UUID userId, @RequestBody DeviceAssociationDTO deviceAssociationDTO) {
+    public ResponseEntity<?> addDevicesToUser(
+            @PathVariable UUID userId, @Valid @RequestBody DeviceAssociationDTO deviceAssociationDTO) {
 
-        UserWithDevicesResponseDTO updatedUser = userService.addDevicesToUser(userId, deviceAssociationDTO.getDeviceIds());
-        EntityModel<UserWithDevicesResponseDTO> userWithDevicesModel = createUserWithDevicesModel(updatedUser, userId);
+        userService.addDevicesToUser(userId, deviceAssociationDTO);
 
-        return ResponseEntity.ok(userWithDevicesModel);
+        return ResponseEntity.ok("Devices added to user");
     }
 
     @Operation(summary = "Remove devices from user", description = "Removes devices from a user.")
     @DeleteMapping("/{userId}/devices")
-    public ResponseEntity<EntityModel<UserResponseDTO>> removeDevicesFromUser(
-            @PathVariable UUID userId, @RequestBody DeviceAssociationDTO deviceAssociationDTO) {
+    public ResponseEntity<?> removeDevicesFromUser(
+            @PathVariable UUID userId, @Valid @RequestBody DeviceAssociationDTO deviceAssociationDTO) {
 
-        UserResponseDTO updatedUser = userService.removeDevicesFromUser(userId, deviceAssociationDTO.getDeviceIds());
-        EntityModel<UserResponseDTO> userModel = createUserEntityModel(updatedUser);
+        userService.removeDevicesFromUser(userId, deviceAssociationDTO);
 
-        return ResponseEntity.ok(userModel);
+        return new ResponseEntity<>("Devices Removed to user", HttpStatus.NO_CONTENT);
     }
 
     @Operation(summary = "Get devices associated with a user", description = "Fetches a list of devices associated with the user.")
@@ -110,9 +108,9 @@ public class UserController {
                 linkTo(methodOn(UserController.class).getAllUsers()).withRel("allUsers"));
     }
 
-    private EntityModel<UserWithDevicesResponseDTO> createUserWithDevicesModel(UserWithDevicesResponseDTO user, UUID userId) {
-        return EntityModel.of(user,
-                linkTo(methodOn(UserController.class).getUserById(userId)).withSelfRel(),
-                linkTo(methodOn(UserController.class).getDevicesFromUser(userId)).withRel("devices"));
-    }
+//    private EntityModel<UserWithDevicesResponseDTO> createUserWithDevicesModel(UserWithDevicesResponseDTO user, UUID userId) {
+//        return EntityModel.of(user,
+//                linkTo(methodOn(UserController.class).getUserById(userId)).withSelfRel(),
+//                linkTo(methodOn(UserController.class).getDevicesFromUser(userId)).withRel("devices"));
+//    }
 }

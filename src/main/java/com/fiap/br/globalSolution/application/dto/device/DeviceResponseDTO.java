@@ -8,8 +8,6 @@ import lombok.Builder;
 import lombok.Data;
 import org.springframework.hateoas.RepresentationModel;
 
-import java.util.UUID;
-
 @EqualsAndHashCode(callSuper = true)
 @Data
 @Builder

@@ -10,3 +10,4 @@ public interface DeviceMapper {
     DeviceResponseDTO toDto(Device device);
 
 }
+

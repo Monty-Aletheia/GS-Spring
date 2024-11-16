@@ -30,14 +30,8 @@ public class Device {
     @Column(name = "power_rating")
     private Double powerRating;  // Potência média em watts
 
-    @Column(name = "estimated_usage_hours")
-    private Double estimatedUsageHours;  // Horas estimadas de uso diário
-
-    @Column(name = "consumption")
-    private Double consumption;  // Consumo estimado em kWh
-
-    @ManyToMany(mappedBy = "devices")
-    private List<User> users;
+    @OneToMany(mappedBy = "device", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<UserDevice> userDevices;
 
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)
