@@ -1,9 +1,13 @@
 package com.fiap.br.globalSolution.application.dto.user;
 
+import jakarta.annotation.Nullable;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
+
+import java.util.UUID;
 
 @Data
 public class UserRequestDTO {
@@ -19,4 +23,9 @@ public class UserRequestDTO {
     @NotEmpty
     @Schema(description = "Password for the user account", example = "securePassword123")
     private String password;
+
+    @Valid
+    @Nullable
+    @Schema(description = "Id of firebase", example = "faf83085-2259-409e-a5dd-0a5348872532")
+    private UUID firebaseId;
 }

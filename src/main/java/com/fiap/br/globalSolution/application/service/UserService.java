@@ -8,40 +8,37 @@ import com.fiap.br.globalSolution.domain.model.User;
 import com.fiap.br.globalSolution.infra.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
+@Transactional
 public class UserService {
 
     private final UserRepository userRepository;
     private final UserMapper userMapper;
 
-    @Transactional(readOnly = true)
-    public List<UserResponseDTO> getAllUsers() {
-        return userRepository.findAll().stream()
-                .map(userMapper::toDto)
-                .toList();
+    public Page<UserResponseDTO> getAllUsers(Pageable pageable) {
+        return userRepository.findAll(pageable)
+                .map(userMapper::toDto);
     }
 
-    @Transactional(readOnly = true)
     public UserResponseDTO getUserById(UUID id) {
         User user = findUserById(id);
         return userMapper.toDto(user);
     }
 
-    @Transactional
     public UserResponseDTO updateUser(UUID id, UserRequestDTO dto) {
         User user = findUserById(id);
-        userMapper.updateEntityFromDto(dto, user);
+        userMapper.updateEntity(dto, user);
         return userMapper.toDto(user);
     }
 
-    @Transactional
     public void deleteUser(UUID id) {
         User user = findUserById(id);
         userRepository.delete(user);

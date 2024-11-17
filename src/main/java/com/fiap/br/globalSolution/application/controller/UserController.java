@@ -8,13 +8,15 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
 
@@ -30,15 +32,22 @@ public class UserController {
     // =                USERS                    =
     // ===========================================
 
-    @Operation(summary = "Get all users", description = "Fetches a list of all users.")
+    @Operation(summary = "Get all users", description = "Fetches a paginated list of all users.")
     @GetMapping
-    public ResponseEntity<List<EntityModel<UserResponseDTO>>> getAllUsers() {
-        List<EntityModel<UserResponseDTO>> users = userService.getAllUsers().stream()
-                .map(this::createUserEntityModel)
-                .collect(Collectors.toList());
+    public ResponseEntity<EntityModel<Page<UserResponseDTO>>> getAllUsers(
+            @RequestParam(value = "page", defaultValue = "1") int page,
+            @RequestParam(value = "size", defaultValue = "10") int size) {
 
-        return ResponseEntity.ok(users);
+        Pageable pageable = PageRequest.of(page - 1, size);
+
+        Page<UserResponseDTO> userPage = userService.getAllUsers(pageable);
+
+        EntityModel<Page<UserResponseDTO>> entityModel = EntityModel.of(userPage,
+                linkTo(methodOn(UserController.class).getAllUsers(page, size)).withSelfRel());
+
+        return ResponseEntity.ok(entityModel);
     }
+
 
     @Operation(summary = "Get a user by ID", description = "Fetches a single user by their unique ID.")
     @GetMapping("/{id}")
@@ -68,7 +77,7 @@ public class UserController {
     private EntityModel<UserResponseDTO> createUserEntityModel(UserResponseDTO user) {
         return EntityModel.of(user,
                 linkTo(methodOn(UserController.class).getUserById(user.getId())).withSelfRel(),
-                linkTo(methodOn(UserController.class).getAllUsers()).withRel("allUsers"));
+                linkTo(methodOn(UserController.class).getAllUsers(1,10)).withRel("allUsers"));
     }
 
 }

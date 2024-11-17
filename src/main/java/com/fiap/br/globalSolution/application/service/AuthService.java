@@ -2,7 +2,7 @@ package com.fiap.br.globalSolution.application.service;
 
 import com.fiap.br.globalSolution.application.dto.auth.AuthResponseDTO;
 import com.fiap.br.globalSolution.application.dto.auth.LoginDTO;
-import com.fiap.br.globalSolution.application.dto.auth.RegisterDTO;
+import com.fiap.br.globalSolution.application.dto.user.UserRequestDTO;
 import com.fiap.br.globalSolution.application.dto.user.UserResponseDTO;
 import com.fiap.br.globalSolution.application.errors.BadRequestException;
 import com.fiap.br.globalSolution.application.errors.NotFoundException;
@@ -11,7 +11,6 @@ import com.fiap.br.globalSolution.application.service.mapper.UserMapper;
 import com.fiap.br.globalSolution.domain.model.User;
 import com.fiap.br.globalSolution.infra.repository.UserRepository;
 import jakarta.transaction.Transactional;
-import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,7 +18,6 @@ import org.springframework.stereotype.Service;
 import java.util.Optional;
 
 @Service
-@Data
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class AuthService {
 
@@ -27,7 +25,7 @@ public class AuthService {
     private final UserMapper userMapper;
 
     @Transactional
-    public AuthResponseDTO register(RegisterDTO registerDTO) {
+    public AuthResponseDTO register(UserRequestDTO registerDTO) {
         User user = userMapper.toEntity(registerDTO);
 
         Optional<User> existUser = userRepository.findByEmail(user.getEmail());

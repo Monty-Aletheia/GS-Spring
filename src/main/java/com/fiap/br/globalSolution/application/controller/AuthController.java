@@ -2,7 +2,7 @@ package com.fiap.br.globalSolution.application.controller;
 
 import com.fiap.br.globalSolution.application.dto.auth.AuthResponseDTO;
 import com.fiap.br.globalSolution.application.dto.auth.LoginDTO;
-import com.fiap.br.globalSolution.application.dto.auth.RegisterDTO;
+import com.fiap.br.globalSolution.application.dto.user.UserRequestDTO;
 import com.fiap.br.globalSolution.application.service.AuthService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,7 +40,7 @@ public class AuthController {
 
     @Operation(summary = "User Registration", description = "Allows a new user to register by providing their details.")
     @PostMapping("/register")
-    public ResponseEntity<EntityModel<AuthResponseDTO>> register(@Valid @RequestBody RegisterDTO registerDTO) {
+    public ResponseEntity<EntityModel<AuthResponseDTO>> register(@Valid @RequestBody UserRequestDTO registerDTO) {
         AuthResponseDTO response = authService.register(registerDTO);
 
         EntityModel<AuthResponseDTO> resource = EntityModel.of(response);

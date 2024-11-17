@@ -14,6 +14,8 @@ import com.fiap.br.globalSolution.infra.repository.DeviceRepository;
 import com.fiap.br.globalSolution.infra.repository.UserDeviceRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,6 +24,7 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
+@Transactional
 public class UserDeviceService {
 
     private final DeviceRepository deviceRepository;
@@ -30,16 +33,11 @@ public class UserDeviceService {
     private final UserDeviceMapper userDeviceMapper;
     private final UserService userService;
 
-    @Transactional(readOnly = true)
-    public List<UserDeviceResponseDTO> getAllUserDevices(UUID userId) {
-        List<UserDevice> userDevices = userDeviceRepository.findByUserId(userId);
-
-        return userDevices.stream()
-                .map(userDeviceMapper::toDto)
-                .toList();
+    public Page<UserDeviceResponseDTO> getAllUserDevices(UUID userId, Pageable pageable) {
+        Page<UserDevice> userDevicesPage = userDeviceRepository.findByUserId(userId, pageable);
+        return userDevicesPage.map(userDeviceMapper::toDto);
     }
 
-    @Transactional
     public void addDevicesToUser(UUID userId, DeviceAssociationDTO dto) {
         User user = userService.findUserById(userId);
 
@@ -54,7 +52,6 @@ public class UserDeviceService {
         userDeviceRepository.saveAll(userDevices);
     }
 
-    @Transactional
     public UserDeviceResponseDTO updateUserDevice(UUID userDeviceId, UUID userId, Double estimatedUsageHours) {
         UserDevice userDevice = userDeviceRepository.findById(userDeviceId)
                 .orElseThrow(() -> new NotFoundException("Device not found or not associated with the user"));
@@ -70,7 +67,6 @@ public class UserDeviceService {
         return userDeviceMapper.toDto(userDevice);
     }
 
-    @Transactional
     public void removeDevicesFromUser(UUID userId, UserDeviceRemoveDTO dto) {
         userService.findUserById(userId);
 

@@ -3,20 +3,26 @@ package com.fiap.br.globalSolution.application.controller;
 import com.fiap.br.globalSolution.application.dto.device.DeviceAssociationDTO;
 import com.fiap.br.globalSolution.application.dto.userDevice.UserDeviceRemoveDTO;
 import com.fiap.br.globalSolution.application.dto.userDevice.UserDeviceResponseDTO;
+import com.fiap.br.globalSolution.application.dto.userDevice.UserDeviceUpdateDTO;
 import com.fiap.br.globalSolution.application.service.UserDeviceService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.hateoas.EntityModel;
-import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.UUID;
+
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @RestController
 @RequestMapping("/users/{userId}/devices")
@@ -32,18 +38,20 @@ public class UserDeviceController {
 
     @Operation(summary = "Get devices associated with a user", description = "Fetches a list of devices associated with the user.")
     @GetMapping
-    public ResponseEntity<?> getDevicesFromUser(@PathVariable UUID userId) {
-        List<UserDeviceResponseDTO> devices = userDeviceService.getAllUserDevices(userId);
+    public ResponseEntity<?> getDevicesFromUser(
+            @PathVariable UUID userId,
+            @RequestParam(value = "page", defaultValue = "1") int page,
+            @RequestParam(value = "size", defaultValue = "10") int size) {
 
-        List<EntityModel<UserDeviceResponseDTO>> deviceModels = devices.stream()
-                .map(device -> EntityModel.of(device,
-                        WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(UserDeviceController.class)
-                                .getDevicesFromUser(userId)).withSelfRel()))
-                .toList();
+        Pageable pageable = PageRequest.of(page - 1, size);
+
+        Page<UserDeviceResponseDTO> devices = userDeviceService.getAllUserDevices(userId, pageable);
+
+        var deviceModels = EntityModel.of(devices,
+                linkTo(methodOn(UserDeviceController.class).getDevicesFromUser(userId, page, size)).withSelfRel());
 
         return ResponseEntity.ok(deviceModels);
     }
-
 
 
     @Operation(summary = "Add devices to user", description = "Associates devices with a user.")
@@ -59,13 +67,13 @@ public class UserDeviceController {
     @Operation(summary = "update device from user", description = "Updated device from a user")
     @PutMapping("{userDeviceId}")
     public ResponseEntity<?> updateDeviceFromUser(
-            @PathVariable UUID userDeviceId, @RequestBody double estimatedUsageHours, @PathVariable UUID userId) {
+            @PathVariable UUID userDeviceId, @Valid @RequestBody UserDeviceUpdateDTO dto, @PathVariable UUID userId) {
 
-        UserDeviceResponseDTO responseDTO = userDeviceService.updateUserDevice(userDeviceId, userId, estimatedUsageHours);
+        UserDeviceResponseDTO responseDTO = userDeviceService.updateUserDevice(userDeviceId, userId, dto.getEstimatedUsageHours());
 
         EntityModel<UserDeviceResponseDTO> deviceModel = EntityModel.of(responseDTO,
-                WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(UserDeviceController.class)
-                        .updateDeviceFromUser(userDeviceId, estimatedUsageHours, userId)).withSelfRel());
+               linkTo(methodOn(UserDeviceController.class).updateDeviceFromUser(userDeviceId, dto, userId)).withSelfRel(),
+                linkTo(methodOn(UserDeviceController.class).getDevicesFromUser(userId, 1, 10)).withRel("AllUserDevices"));
 
         return ResponseEntity.ok(deviceModel);
     }
