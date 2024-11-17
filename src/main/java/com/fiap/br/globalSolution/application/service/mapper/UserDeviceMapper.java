@@ -1,13 +1,17 @@
 package com.fiap.br.globalSolution.application.service.mapper;
 
-import com.fiap.br.globalSolution.application.dto.device.UserDeviceDTO;
+import com.fiap.br.globalSolution.application.dto.userDevice.UserDeviceDTO;
+import com.fiap.br.globalSolution.application.dto.userDevice.UserDeviceResponseDTO;
 import com.fiap.br.globalSolution.domain.model.Device;
 import com.fiap.br.globalSolution.domain.model.User;
 import com.fiap.br.globalSolution.domain.model.UserDevice;
+import org.springframework.stereotype.Component;
+
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+@Component
 public class UserDeviceMapper {
 
     public UserDevice toEntity(UserDeviceDTO userDeviceDTO, User user, Device device) {
@@ -15,22 +19,15 @@ public class UserDeviceMapper {
             return null;
         }
 
-        // Mapeamento manual do DTO para a entidade
         UserDevice userDevice = new UserDevice();
 
-        // Definir o consumo com base na fórmula de potência e uso estimado
         userDevice.setEstimatedUsageHours(userDeviceDTO.getEstimatedUsageHours());
 
         userDevice.setConsumption(calculateConsumption(device.getPowerRating(), userDeviceDTO.getEstimatedUsageHours()));
 
-        // Definir o dispositivo no UserDevice, baseado no dispositivo atual
         userDevice.setDevice(device);
 
-        // Defina o usuário no UserDevice
         userDevice.setUser(user);
-
-        // Adicionar qualquer outra propriedade do DTO para a entidade, se necessário
-        // userDevice.setOtherProperty(userDeviceDTO.getOtherProperty());
 
         return userDevice;
     }
@@ -44,6 +41,28 @@ public class UserDeviceMapper {
                 .map(userDeviceDTO -> toEntity(userDeviceDTO, user, findDeviceById(devices, userDeviceDTO.getDeviceId())))
                 .collect(Collectors.toList());
     }
+
+    public void updateEntityFromDto(double estimatedUsageHours, UserDevice entity) {
+        entity.setEstimatedUsageHours(estimatedUsageHours);
+        double consumption = calculateConsumption(entity.getDevice().getPowerRating(), estimatedUsageHours);
+        entity.setConsumption(consumption);
+    }
+
+    public UserDeviceResponseDTO toDto(UserDevice entity) {
+        UserDeviceResponseDTO dto = new UserDeviceResponseDTO();
+        Device device = entity.getDevice();
+
+        dto.setId(entity.getId());
+        dto.setEstimatedUsageHours(entity.getEstimatedUsageHours());
+        dto.setConsumption(entity.getConsumption());
+        dto.setModel(device.getModel());
+        dto.setPowerRating(device.getPowerRating());
+        dto.setCategory(device.getCategory());
+        dto.setName(device.getName());
+
+        return dto;
+    }
+
 
     private Double calculateConsumption(Double powerRating, Double estimatedUsageHours) {
         if (powerRating == null || estimatedUsageHours == null) {
@@ -60,6 +79,6 @@ public class UserDeviceMapper {
         return devices.stream()
                 .filter(device -> device.getId().equals(deviceId))
                 .findFirst()
-                .orElse(null); // Retorna null se não encontrar o dispositivo
+                .orElse(null);
     }
 }

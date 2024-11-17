@@ -1,5 +1,6 @@
 package com.fiap.br.globalSolution.application.dto.device;
 
+import com.fiap.br.globalSolution.application.dto.userDevice.UserDeviceDTO;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;

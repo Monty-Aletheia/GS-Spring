@@ -1,16 +1,14 @@
 package com.fiap.br.globalSolution.application.controller;
 
-import com.fiap.br.globalSolution.application.dto.device.DeviceResponseDTO;
-import com.fiap.br.globalSolution.application.dto.device.DeviceAssociationDTO;
 import com.fiap.br.globalSolution.application.dto.user.UserRequestDTO;
 import com.fiap.br.globalSolution.application.dto.user.UserResponseDTO;
 import com.fiap.br.globalSolution.application.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.EntityModel;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,15 +20,11 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
 
 @RestController
 @RequestMapping("/users")
+@RequiredArgsConstructor(onConstructor = @__(@Autowired))
 @Tag(name = "Users", description = "User management API")
 public class UserController {
 
     private final UserService userService;
-
-    @Autowired
-    public UserController(UserService userService) {
-        this.userService = userService;
-    }
 
     // ===========================================
     // =                USERS                    =
@@ -68,37 +62,6 @@ public class UserController {
     }
 
     // ===========================================
-    // =                DEVICES                 =
-    // ===========================================
-
-    @Operation(summary = "Add devices to user", description = "Associates devices with a user.")
-    @PostMapping("/{userId}/devices")
-    public ResponseEntity<?> addDevicesToUser(
-            @PathVariable UUID userId, @Valid @RequestBody DeviceAssociationDTO deviceAssociationDTO) {
-
-        userService.addDevicesToUser(userId, deviceAssociationDTO);
-
-        return ResponseEntity.ok("Devices added to user");
-    }
-
-    @Operation(summary = "Remove devices from user", description = "Removes devices from a user.")
-    @DeleteMapping("/{userId}/devices")
-    public ResponseEntity<?> removeDevicesFromUser(
-            @PathVariable UUID userId, @Valid @RequestBody DeviceAssociationDTO deviceAssociationDTO) {
-
-        userService.removeDevicesFromUser(userId, deviceAssociationDTO);
-
-        return new ResponseEntity<>("Devices Removed to user", HttpStatus.NO_CONTENT);
-    }
-
-    @Operation(summary = "Get devices associated with a user", description = "Fetches a list of devices associated with the user.")
-    @GetMapping("/{userId}/devices")
-    public ResponseEntity<List<DeviceResponseDTO>> getDevicesFromUser(@PathVariable UUID userId) {
-        List<DeviceResponseDTO> devices = userService.getAllUserDevices(userId);
-        return ResponseEntity.ok(devices);
-    }
-
-    // ===========================================
     // =             HELPER METHODS              =
     // ===========================================
 
@@ -108,9 +71,4 @@ public class UserController {
                 linkTo(methodOn(UserController.class).getAllUsers()).withRel("allUsers"));
     }
 
-//    private EntityModel<UserWithDevicesResponseDTO> createUserWithDevicesModel(UserWithDevicesResponseDTO user, UUID userId) {
-//        return EntityModel.of(user,
-//                linkTo(methodOn(UserController.class).getUserById(userId)).withSelfRel(),
-//                linkTo(methodOn(UserController.class).getDevicesFromUser(userId)).withRel("devices"));
-//    }
 }
