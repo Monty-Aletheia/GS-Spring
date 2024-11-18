@@ -28,7 +28,7 @@ public class User {
     private String email;
 
     @Column(unique = true)
-    private UUID firebaseId;
+    private String firebaseId;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<UserDevice> userDevices;

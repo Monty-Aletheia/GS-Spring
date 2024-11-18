@@ -57,7 +57,7 @@ public class UserController {
 
     @Operation(summary = "Get a user by FirebaseId", description = "Fetches a single user by their unique FirebaseId.")
     @GetMapping("/firebase/{firebaseId}")
-    public ResponseEntity<EntityModel<UserResponseDTO>> getUserByFirebaseId(@PathVariable UUID firebaseId) {
+    public ResponseEntity<EntityModel<UserResponseDTO>> getUserByFirebaseId(@PathVariable String firebaseId) {
         UserResponseDTO user = userService.getUserByFirebaseId(firebaseId);
         return ResponseEntity.ok(createUserEntityModel(user));
     }

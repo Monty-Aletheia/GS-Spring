@@ -21,5 +21,5 @@ public class UserResponseDTO extends RepresentationModel<UserResponseDTO> {
     private String email;
 
     @Schema(description = "Id of firebase", example = "faf83085-2259-409e-a5dd-0a5348872532")
-    private UUID firebaseId;
+    private String firebaseId;
 }

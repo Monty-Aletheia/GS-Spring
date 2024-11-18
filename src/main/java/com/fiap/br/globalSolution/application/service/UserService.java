@@ -33,7 +33,7 @@ public class UserService {
         return userMapper.toDto(user);
     }
 
-    public UserResponseDTO getUserByFirebaseId(UUID firebaseId) {
+    public UserResponseDTO getUserByFirebaseId(String firebaseId) {
         User user = userRepository.findByFirebaseId(firebaseId)
                 .orElseThrow(() -> new NotFoundException("User not found"));
         return userMapper.toDto(user);
