@@ -11,7 +11,6 @@ import java.util.UUID;
 
 public interface UserDeviceRepository extends JpaRepository<UserDevice, UUID> {
 
-    List<UserDevice> findByUserId(UUID userId);
     Page<UserDevice> findByUserId(UUID userId, Pageable pageable);
 
     boolean existsByIdIn(@NotNull List<UUID> deviceIds);

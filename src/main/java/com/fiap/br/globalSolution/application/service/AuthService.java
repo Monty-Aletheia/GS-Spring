@@ -28,9 +28,15 @@ public class AuthService {
     public AuthResponseDTO register(UserRequestDTO registerDTO) {
         User user = userMapper.toEntity(registerDTO);
 
-        Optional<User> existUser = userRepository.findByEmail(user.getEmail());
+        Optional<User> existEmail = userRepository.findByEmail(user.getEmail());
 
-        if(existUser.isPresent()) {
+        if (registerDTO.getFirebaseId() != null) {
+            userRepository.findByFirebaseId(registerDTO.getFirebaseId()).ifPresent(user1 -> {
+                throw new BadRequestException("FirebaseId already in use");
+            });
+        }
+
+        if(existEmail.isPresent()) {
             throw new BadRequestException("This email already in use");
         }
 

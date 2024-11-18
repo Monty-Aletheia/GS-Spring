@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.UUID;
 
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
@@ -40,6 +39,7 @@ public class DeviceController {
 
         Pageable pageable = PageRequest.of(page - 1, size);
         Page<DeviceResponseDTO> devicesPage = deviceService.getDevices(pageable);
+
 
         return ResponseEntity.ok(createDevicePageEntityModel(devicesPage, page, size));
     }

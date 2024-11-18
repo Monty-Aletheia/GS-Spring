@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -50,23 +49,30 @@ public class UserController {
 
 
     @Operation(summary = "Get a user by ID", description = "Fetches a single user by their unique ID.")
-    @GetMapping("/{id}")
-    public ResponseEntity<EntityModel<UserResponseDTO>> getUserById(@PathVariable UUID id) {
-        UserResponseDTO user = userService.getUserById(id);
+    @GetMapping("/{userId}")
+    public ResponseEntity<EntityModel<UserResponseDTO>> getUserById(@PathVariable UUID userId) {
+        UserResponseDTO user = userService.getUserById(userId);
+        return ResponseEntity.ok(createUserEntityModel(user));
+    }
+
+    @Operation(summary = "Get a user by FirebaseId", description = "Fetches a single user by their unique FirebaseId.")
+    @GetMapping("/firebase/{firebaseId}")
+    public ResponseEntity<EntityModel<UserResponseDTO>> getUserByFirebaseId(@PathVariable UUID firebaseId) {
+        UserResponseDTO user = userService.getUserByFirebaseId(firebaseId);
         return ResponseEntity.ok(createUserEntityModel(user));
     }
 
     @Operation(summary = "Update a user", description = "Updates the details of an existing user.")
-    @PutMapping("/{id}")
-    public ResponseEntity<EntityModel<UserResponseDTO>> updateUser(@RequestBody @Valid UserRequestDTO dto, @PathVariable UUID id) {
-        UserResponseDTO updatedUser = userService.updateUser(id, dto);
+    @PutMapping("/{userId}")
+    public ResponseEntity<EntityModel<UserResponseDTO>> updateUser(@RequestBody @Valid UserRequestDTO dto, @PathVariable UUID userId) {
+        UserResponseDTO updatedUser = userService.updateUser(userId, dto);
         return ResponseEntity.ok(createUserEntityModel(updatedUser));
     }
 
     @Operation(summary = "Delete a user by ID", description = "Deletes a user by their unique ID.")
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteUserById(@PathVariable UUID id) {
-        userService.deleteUser(id);
+    @DeleteMapping("/{userId}")
+    public ResponseEntity<Void> deleteUserById(@PathVariable UUID userId) {
+        userService.deleteUser(userId);
         return ResponseEntity.noContent().build();
     }
 
