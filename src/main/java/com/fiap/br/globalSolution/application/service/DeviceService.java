@@ -34,7 +34,7 @@ public class DeviceService {
 
     public DeviceResponseDTO createDevice(DeviceRequestDTO deviceRequestDTO) {
         Device device = deviceMapper.toEntity(deviceRequestDTO);
-        device = deviceRepository.save(device);
+        device = deviceRepository.insertDevice(device);
         return deviceMapper.toDto(device);
     }
 

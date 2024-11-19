@@ -1,6 +1,7 @@
 package com.fiap.br.globalSolution.application.controller;
 
 import com.fiap.br.globalSolution.application.dto.device.DeviceAssociationDTO;
+import com.fiap.br.globalSolution.application.dto.userDevice.UserDeviceDTO;
 import com.fiap.br.globalSolution.application.dto.userDevice.UserDeviceRemoveDTO;
 import com.fiap.br.globalSolution.application.dto.userDevice.UserDeviceResponseDTO;
 import com.fiap.br.globalSolution.application.dto.userDevice.UserDeviceUpdateDTO;
@@ -61,6 +62,14 @@ public class UserDeviceController {
         userDeviceService.addDevicesToUser(userId, deviceAssociationDTO);
 
         return ResponseEntity.ok("Devices added to user");
+    }
+
+    @PostMapping("/procedure")
+    public ResponseEntity<?> addOneDeviceToUser(
+            @PathVariable UUID userId, @Valid @RequestBody UserDeviceDTO userDeviceDTO){
+        userDeviceService.addDeviceToUser(userId, userDeviceDTO);
+
+        return ResponseEntity.ok("Device added to user");
     }
 
     @Operation(summary = "update device from user", description = "Updated device from a user")

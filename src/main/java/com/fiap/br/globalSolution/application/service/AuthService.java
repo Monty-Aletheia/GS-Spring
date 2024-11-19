@@ -40,7 +40,7 @@ public class AuthService {
             throw new BadRequestException("This email already in use");
         }
 
-        User savedUser = userRepository.save(user);
+        User savedUser = userRepository.insertUser(user);
         UserResponseDTO userResponse = userMapper.toDto(savedUser);
         String message = "User registered successfully";
 

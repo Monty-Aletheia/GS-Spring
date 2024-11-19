@@ -52,6 +52,22 @@ public class UserDeviceService {
         userDeviceRepository.saveAll(userDevices);
     }
 
+    public void addDeviceToUser(UUID userId, UserDeviceDTO dto) {
+        User user = userService.findUserById(userId);
+
+        Device device = deviceRepository.findById(dto.getDeviceId())
+                .orElseThrow(() -> new NotFoundException("Device not found"));
+
+        UserDevice userDevice = new UserDevice();
+
+        userDevice.setUser(user);
+        userDevice.setDevice(device);
+        userDevice.setEstimatedUsageHours(dto.getEstimatedUsageHours());
+        userDevice.setConsumption((device.getPowerRating() / 1000) * dto.getEstimatedUsageHours());
+
+        userDeviceRepository.insertUserDevices(userDevice);
+    }
+
     public UserDeviceResponseDTO updateUserDevice(UUID userDeviceId, UUID userId, Double estimatedUsageHours) {
         UserDevice userDevice = userDeviceRepository.findById(userDeviceId)
                 .orElseThrow(() -> new NotFoundException("Device not found or not associated with the user"));
