@@ -19,15 +19,12 @@ public interface UserDeviceRepository extends JpaRepository<UserDevice, UUID> {
     @Procedure(procedureName = "insert_user_devices")
     UUID insertUserDevices(UUID p_device_id, UUID p_user_id, Double p_power_rating, Double p_estimated_usage_hours);
 
-    default UserDevice insertUserDevices(UserDevice p_user_device) {
+    default void insertUserDevices(UserDevice p_user_device) {
         UUID id = insertUserDevices(
                 p_user_device.getDevice().getId(),
                 p_user_device.getUser().getId(),
                 p_user_device.getDevice().getPowerRating(),
                 p_user_device.getEstimatedUsageHours()
         );
-
-        return findById(id)
-                .orElseThrow(() -> new RuntimeException("User device not found"));
     }
 }

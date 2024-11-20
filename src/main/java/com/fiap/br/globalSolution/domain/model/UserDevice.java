@@ -2,6 +2,7 @@ package com.fiap.br.globalSolution.domain.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -10,6 +11,7 @@ import java.util.UUID;
 
 @Entity
 @Data
+@NoArgsConstructor
 @Table(name = "user_devices")
 public class UserDevice {
 
