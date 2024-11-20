@@ -52,6 +52,14 @@ public class DeviceController {
         return ResponseEntity.ok(createDeviceEntityModel(responseDTO, deviceId));
     }
 
+    @Operation(summary = "Get a device by name", description = "Fetches a single device by their unique Name.")
+    @GetMapping("/find/{deviceName}")
+    public ResponseEntity<EntityModel<DeviceResponseDTO>> getDeviceByName(@PathVariable String deviceName) {
+        DeviceResponseDTO responseDTO = deviceService.getDeviceByName(deviceName);
+
+        return ResponseEntity.ok(createDeviceEntityModel(responseDTO, responseDTO.getId()));
+    }
+
     @Operation(summary = "Create new device", description = "Register a new device in database.")
     @PostMapping
     public ResponseEntity<EntityModel<DeviceResponseDTO>> createDevice(@RequestBody @Valid DeviceRequestDTO deviceRequestDTO) {
