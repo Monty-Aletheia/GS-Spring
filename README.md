@@ -2,11 +2,11 @@
 
 ## Integrantes:
 
-Natan Junior Rodrigues Lopes   RM: 552626
+Natan Junior Rodrigues Lopes   RM: 552626  Turma: 2TDSPA
 
-Pedro Lucca Medeiros Miranda   RM: 553873
+Pedro Lucca Medeiros Miranda   RM: 553873  Turma: 2TDSPA
 
-Pedro Moreira de Jesus         RM: 553912
+Pedro Moreira de Jesus         RM: 553912  Turma: 2TDSPA
 
 # Sumário
 
@@ -24,6 +24,10 @@ Pedro Moreira de Jesus         RM: 553912
 
 ## Apresentação do projeto
 
+O Wind Rose é um aplicativo que permite o cadastro e acompanhamento de consumo de 
+dispositivos eletrodomésticos com o intuito de conscientizar os seus usuários do uso 
+apropriado da energia elétrica para reduzir a necessidade do uso de energia não sustentável 
+que agride o meio ambiente
 
 ## Pré-requisitos
 
@@ -67,7 +71,7 @@ Pedro Moreira de Jesus         RM: 553912
 
 3. Acesse a API em http://localhost:8080/api ou acesse o swagger a partir http://localhost:8080/api/swagger-ui/index.html#/.
 
-## Diagramas 
+## Diagramas
 
 ### DER (Diagrama de Entidade-Relacionamento)
 ![Class Diagram.png](docs%2FClass%20Diagram.png)
@@ -87,10 +91,10 @@ Pedro Moreira de Jesus         RM: 553912
             ├──Config
             ├──Controller
             ├──Dto
-            |  ├───auth
-            |  ├───device
-            |  ├───user
-            |  └───userDevice
+            │  ├───auth
+            │  ├───device
+            │  ├───user
+            │  └───userDevice
             ├──Errors
             └──Service
                ├──Mapper
@@ -99,8 +103,8 @@ Pedro Moreira de Jesus         RM: 553912
 
 ## Link Video Pitch
 
---
+https://www.youtube.com/watch?v=RJH1z7ax50o
 
 ## Link Video Software
 
---
+https://youtu.be/sDJ-10UO8js
